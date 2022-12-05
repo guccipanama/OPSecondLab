@@ -3,9 +3,9 @@
 
 DWORD WINAPI sum1_(LPVOID param)
 {
-    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\pipe_a", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
-    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\pipe_b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
-    HANDLE pipe_c = CreateNamedPipe(L"\\\\.\\pipe\\pipe_c", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\a", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_c = CreateNamedPipe(L"\\\\.\\pipe\\c", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
 
     HANDLE mutex_a = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_a");
     HANDLE mutex_b = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_b");
@@ -31,7 +31,7 @@ DWORD WINAPI sum1_(LPVOID param)
         auto tmp2 = ReadFile(pipe_b, &received_b.bytes, sizeof(int), &real_reading_b, NULL);
         auto tmp3 = ReadFile(pipe_c, &received_c.bytes, sizeof(int), &real_reading_c, NULL);
 
-        HANDLE sum1 = CreateFile(L"\\\\.\\pipe\\sum", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE sum1 = CreateFile(L"\\\\.\\pipe\\sum1", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
         res.value = received_a.value + received_b.value + received_c.value;
 
@@ -44,7 +44,7 @@ DWORD WINAPI sum1_(LPVOID param)
         std::cout << std::endl << "DEBUG OUT: Function result - a + b + c: " << res.value << std::endl;
         std::cout  << "DEBUG OUT: Program is terminating now!" << std::endl;
         
-        ReleaseMutex(L"mutex_b");
+        ReleaseMutex(mutex_b);
     }
     
     return 0;

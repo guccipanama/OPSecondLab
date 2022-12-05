@@ -19,9 +19,8 @@ union double_convert
 DWORD WINAPI sum1_(LPVOID param);
 DWORD WINAPI div1_(LPVOID param);
 DWORD WINAPI sub_(LPVOID param);
-DWORD WINAPI sum2_(LPVOID param);
-
 DWORD WINAPI sqr_(LPVOID param);
-
+DWORD WINAPI sum2_(LPVOID param);
+DWORD WINAPI div2_(LPVOID param);
 
 #endif

@@ -3,8 +3,8 @@
 
 DWORD WINAPI div1_(LPVOID param)
 {
-    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\pipe_a", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
-    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\pipe_b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\sum1", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    //HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\pipe_b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
 
     HANDLE mutex_b = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_c");
     HANDLE mutex_c = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_d");
@@ -31,12 +31,11 @@ DWORD WINAPI div1_(LPVOID param)
         WriteFile(div, res.bytes, sizeof(int), &real_reading_div1, NULL);
 
         CloseHandle(pipe_a);
-        CloseHandle(pipe_b);
 
         std::cout << std::endl << "DEBUG OUT: Function result - a / b: " << res.value << std::endl;
         std::cout << "DEBUG OUT: Program is terminating now!" << std::endl;
 
-        ReleaseMutex(L"mutex_b");
+        ReleaseMutex(mutex_c);
     }
 
     return 0;

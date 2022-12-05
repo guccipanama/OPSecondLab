@@ -3,18 +3,18 @@
 
 DWORD WINAPI sum2_(LPVOID param)
 {
-    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\pipe_a", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
-    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\pipe_b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
-    HANDLE pipe_c = CreateNamedPipe(L"\\\\.\\pipe\\pipe_c", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\sqr_1", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\sqr_2", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_c = CreateNamedPipe(L"\\\\.\\pipe\\sqr_3", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
 
-    HANDLE mutex_a = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_a");
-    HANDLE mutex_b = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_b");
+    HANDLE mutex_e = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_a");
+    HANDLE mutex_f = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_b");
 
     while (true)
     {
-        WaitForSingleObject(mutex_a, INFINITE);
+        WaitForSingleObject(mutex_e, INFINITE);
 
-        std::cout << std::endl << "DEBUG OUT: FIRST PROGRAM" << std::endl;
+        std::cout << std::endl << "DEBUG OUT: FIFTH PROGRAM" << std::endl;
         std::cout << "DEBUG OUT: Program is calculating sum of a, b and c now!" << std::endl;
 
         int_convert received_a;
@@ -31,11 +31,11 @@ DWORD WINAPI sum2_(LPVOID param)
         auto tmp2 = ReadFile(pipe_b, &received_b.bytes, sizeof(int), &real_reading_b, NULL);
         auto tmp3 = ReadFile(pipe_c, &received_c.bytes, sizeof(int), &real_reading_c, NULL);
 
-        HANDLE sum1 = CreateFile(L"\\\\.\\pipe\\sum", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE sum2 = CreateFile(L"\\\\.\\pipe\\sum2", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
         res.value = received_a.value + received_b.value + received_c.value;
 
-        WriteFile(sum1, res.bytes, sizeof(int), &real_reading_sum, NULL);
+        WriteFile(sum2, res.bytes, sizeof(int), &real_reading_sum, NULL);
 
         CloseHandle(pipe_a);
         CloseHandle(pipe_b);
@@ -44,7 +44,7 @@ DWORD WINAPI sum2_(LPVOID param)
         std::cout << std::endl << "DEBUG OUT: Function result - a + b + c: " << res.value << std::endl;
         std::cout << "DEBUG OUT: Program is terminating now!" << std::endl;
 
-        ReleaseMutex(L"mutex_a");
+        ReleaseMutex(mutex_f);
     }
 
     return 0;

@@ -17,6 +17,8 @@ int main()
     DWORD info_2;
     DWORD info_3;
     DWORD info_4;
+    DWORD info_5;
+    DWORD info_6;
     CreateMutex(NULL, TRUE, L"mutex_a");
     CreateMutex(NULL, TRUE, L"mutex_b");
     CreateMutex(NULL, TRUE, L"mutex_c");
@@ -24,14 +26,15 @@ int main()
     CreateMutex(NULL, TRUE, L"mutex_e");
     CreateMutex(NULL, TRUE, L"mutex_f");
     CreateMutex(NULL, TRUE, L"mutex_g");
-    CreateMutex(NULL, TRUE, L"mutex_h");
 
-    CreateThread(NULL, 0, &sum_, NULL, 0, &info_1);
-    CreateThread(NULL, 0, &div_, NULL, 0, &info_2);
+    CreateThread(NULL, 0, &sum1_, NULL, 0, &info_1);
+    CreateThread(NULL, 0, &div1_, NULL, 0, &info_2);
     CreateThread(NULL, 0, &sub_, NULL, 0, &info_3);
     CreateThread(NULL, 0, &sqr_, NULL, 0, &info_4);
+    CreateThread(NULL, 0, &sum2_, NULL, 0, &info_5);
+    CreateThread(NULL, 0, &div2_, NULL, 0, &info_6);
 
-    HANDLE res = CreateNamedPipe(L"\\\\.\\pipe\\pipe_res", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE res = CreateNamedPipe(L"\\\\.\\pipe\\result", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
 
     int a = 0;
     int b = 0;
@@ -66,9 +69,9 @@ int main()
     WriteFile(value_c, received_c.bytes, sizeof(int), &real_read_c, NULL);
 
     HANDLE mutex_a = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_a");
-    HANDLE mutex_b = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_b");
+    HANDLE mutex_g = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_g");
 
-    WaitForSingleObject(mutex_b, INFINITE);
+    WaitForSingleObject(mutex_g, INFINITE);
     Sleep(1);
 
     double_convert result;

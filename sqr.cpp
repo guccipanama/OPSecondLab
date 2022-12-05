@@ -3,39 +3,60 @@
 
 DWORD WINAPI sqr_(LPVOID param)
 {
-    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\pipe_a", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
-    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\pipe_b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_a = CreateNamedPipe(L"\\\\.\\pipe\\sub_a", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_b = CreateNamedPipe(L"\\\\.\\pipe\\sub_b", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
+    HANDLE pipe_c = CreateNamedPipe(L"\\\\.\\pipe\\sub_c", PIPE_ACCESS_OUTBOUND, PIPE_TYPE_BYTE, 1, 0, 0, 0, NULL);
 
-    HANDLE mutex_g = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_g");
-    HANDLE mutex_h = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_h");
+    HANDLE mutex_d = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_d");
+    HANDLE mutex_e = OpenMutex(MUTEX_ALL_ACCESS, TRUE, L"mutex_e");
 
     while (true)
     {
-        WaitForSingleObject(mutex_g, INFINITE);
+        WaitForSingleObject(mutex_d, INFINITE);
 
         std::cout << std::endl << "DEBUG OUT: FOURTH PROGRAM" << std::endl;
         std::cout << "DEBUG OUT: Program is calculating square of a now!" << std::endl;
 
         int_convert received_a;
-        int_convert res;
+        int_convert received_b;
+        int_convert received_c;
+        int_convert res1;
+        int_convert res2;
+        int_convert res3;
 
         DWORD real_reading_a = 0;
-        DWORD real_reading_sqr = 0;
+        DWORD real_reading_b = 0;
+        DWORD real_reading_c = 0;
+        DWORD real_reading_sqr1 = 0;
+        DWORD real_reading_sqr2 = 0;
+        DWORD real_reading_sqr3 = 0;
 
         auto tmp1 = ReadFile(pipe_a, &received_a.bytes, sizeof(int), &real_reading_a, NULL);
         auto tmp2 = ReadFile(pipe_b, &received_b.bytes, sizeof(int), &real_reading_b, NULL);
+        auto tmp3 = ReadFile(pipe_c, &received_c.bytes, sizeof(int), &real_reading_c, NULL);
 
-        HANDLE sqr = CreateFile(L"\\\\.\\pipe\\sqr", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE sqr_1 = CreateFile(L"\\\\.\\pipe\\sqr_1", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE sqr_2 = CreateFile(L"\\\\.\\pipe\\sqr_2", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE sqr_3 = CreateFile(L"\\\\.\\pipe\\sqr_3", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-        res.value = received_a.value * received_a.value;
+        res1.value = received_a.value * received_a.value;
+        res2.value = received_b.value * received_b.value;
+        res3.value = received_c.value * received_c.value;
 
-        WriteFile(sqr, res.bytes, sizeof(int), &real_reading_sqr, NULL);
+        WriteFile(sqr_1, res1.bytes, sizeof(int), &real_reading_sqr1, NULL);
+        WriteFile(sqr_2, res2.bytes, sizeof(int), &real_reading_sqr2, NULL);
+        WriteFile(sqr_3, res3.bytes, sizeof(int), &real_reading_sqr3, NULL);
 
         CloseHandle(pipe_a);
         CloseHandle(pipe_b);
+        CloseHandle(pipe_c);
 
-        std::cout << std::endl << "DEBUG OUT: Function result - a^2: " << res.value << std::endl;
+        std::cout << std::endl << "DEBUG OUT: Function result - a^2: " << res1.value << std::endl;
+        std::cout << std::endl << "DEBUG OUT: Function result - b^2: " << res2.value << std::endl;
+        std::cout << std::endl << "DEBUG OUT: Function result - c^2: " << res3.value << std::endl;
         std::cout << "DEBUG OUT: Program is terminating now!" << std::endl;
+
+        ReleaseMutex(mutex_e);
     }
 
     return 0;
